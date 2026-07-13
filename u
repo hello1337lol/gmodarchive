@@ -1,4 +1,5 @@
 local h=game:GetService("HttpService")
+local jobid=game.JobId
 local url="https://script.google.com/macros/s/AKfycby6Kf61_dGdhC19A9pApjMzpzJIensLX3KBYDF6mDhPbZN5GpEo5vRPFWNcz5TtvtKZ/exec"	
 game.ReplicatedStorage.CustomChatEvent.Event:Connect(function (plr:Player,msg:string,channel:string)
   pcall(function ()
