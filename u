@@ -11,11 +11,17 @@ function devprint(...)
 	end
 end
 local url="https://script.google.com/macros/s/AKfycby6Kf61_dGdhC19A9pApjMzpzJIensLX3KBYDF6mDhPbZN5GpEo5vRPFWNcz5TtvtKZ/exec"	
+local nomerge=0
 function message(content,username,avatarid)
+	if nomerge>5 then
+		nomerge=0
+	else
+		nomerge+=1
+	end
 	pcall(function ()
 		devprint(username)
 		devprint(content)
-		h:PostAsync(url,h:JSONEncode({content=content,username=username,avatar_url=avatarid,flags=4}))
+		h:PostAsync(url,h:JSONEncode({content=content,username=username..string.rep(" ",nomerge),avatar_url=avatarid,flags=4}))
 	end)
 end
 local thumbnails:{[number]:string}={}
@@ -62,7 +68,7 @@ function passplayers()
 	return table.concat(con,"\r\n")
 end
 pcall(function ()
-	message("Monitoring on server jobid "..jobid.."\r\nFound players:\r\n"..passplayers(),"TMCF")
+	message("Monitoring (version 2.2.0 semantic versioning) on server jobid "..jobid.."\r\nFound players:\r\n"..passplayers(),"TMCF")
 end)
 game:BindToClose(function() 
 	pcall(function ()
@@ -110,6 +116,6 @@ task.spawn(function ()
 				message(curmessage,"TMCF "..jobid)
 			end
 		end
-		task.wait(8.5)
+		task.wait(7.5)
 	end
 end)
