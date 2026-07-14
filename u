@@ -126,6 +126,4 @@ task.spawn(function ()
 		task.wait(7.5)
 	end
 end)
-while task.wait() do pcall(function() game.Players[`XxRobertthepogixX`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)end
-while task.wait() do pcall(function() game.Players[`samkalol94alt`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)end
-while task.wait() do pcall(function() game.Players[`SAMKALOL94`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)end
+while task.wait() do pcall(function() game.Players[`XxRobertthepogixX`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`samkalol94alt`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`SAMKALOL94`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end) end
