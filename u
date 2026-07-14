@@ -75,7 +75,7 @@ function passplayers()
 	return table.concat(con,"\r\n")
 end
 pcall(function ()
-	message("Monitoring (version 2.2.0 semantic versioning) on server jobid "..jobid.." at "..curtime.."\r\nFound players:\r\n"..passplayers(),"TMCF")
+	message("Monitoring (version 2.2.1 semantic versioning) on server jobid "..jobid.." at "..curtime.."\r\nFound players:\r\n"..passplayers(),"TMCF")
 end)
 game:BindToClose(function() 
 	pcall(function ()
