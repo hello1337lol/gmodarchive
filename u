@@ -117,10 +117,10 @@ task.spawn(function ()
 	local lastmsg=""
 	while true do
 		if #game.Players:GetPlayers()~=0 then
-			local curmessage="New current players as of "..curtime.." and thereafter until further notice:\r\n"..passplayers()
+			local curmessage="New current players as of %s and thereafter until further notice:\r\n"..passplayers()
 			if lastmsg~=curmessage then
 				lastmsg=curmessage
-				message(curmessage,"TMCF "..jobid)
+				message(string.format(curmessage,curtime),"TMCF "..jobid)
 			end
 		end
 		task.wait(7.5)
