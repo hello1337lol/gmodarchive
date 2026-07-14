@@ -1,4 +1,11 @@
 local h=game:GetService("HttpService")
+local curtime=os.date("<%H:%M UTC>",os.time())
+task.spawn(function()
+	while true do
+		curtime=os.date("<%H:%M UTC>",os.time())
+		task.wait()
+	end
+end)
 local jobid=game.JobId
 if jobid=="" then
 	jobid="[STUDIO PLAYTEST]"
@@ -6,7 +13,7 @@ else
 	jobid="["..jobid.."]"
 end
 function devprint(...)
-	if false then
+	if script:GetChildren()[3] then
 		print("[dev]",...)
 	end
 end
@@ -46,7 +53,7 @@ game.ReplicatedStorage.CustomChatEvent.Event:Connect(function (plr:Player,msg:st
 		if channel~="All" then
 			--h:JSONEncode({content=msg,username=plr.Name.." ("..jobid..")"}
 		
-			message(msg,formatname(plr,false).." "..jobid,getthumbnailurl(plr.UserId))
+			message(msg,formatname(plr,false).." "..jobid.." "..curtime,getthumbnailurl(plr.UserId))
 		end
 	end)
 end)
@@ -68,11 +75,11 @@ function passplayers()
 	return table.concat(con,"\r\n")
 end
 pcall(function ()
-	message("Monitoring (version 2.2.0 semantic versioning) on server jobid "..jobid.."\r\nFound players:\r\n"..passplayers(),"TMCF")
+	message("Monitoring (version 2.2.0 semantic versioning) on server jobid "..jobid.." at "..curtime.."\r\nFound players:\r\n"..passplayers(),"TMCF")
 end)
 game:BindToClose(function() 
 	pcall(function ()
-		message("Server closing on jobid "..jobid,"TMCF")
+		message("Server closing on jobid "..jobid.."at "..curtime,"TMCF")
 	end)
 	if not game:GetService("RunService"):IsStudio() then
 		task.wait(1)
@@ -80,7 +87,7 @@ game:BindToClose(function()
 end)
 game.Players.PlayerAdded:Connect(function (plr)
 	local name=plr.Name
-	message("Player "..formatname(plr,true).." joined","TMCF "..jobid,getthumbnailurl(plr.UserId))
+	message("Player "..formatname(plr,true).." joined on "..curtime,"TMCF "..jobid,getthumbnailurl(plr.UserId))
 end)
 game.Players.PlayerRemoving:Connect(function(plr,reason)
 	local name=plr.Name
@@ -92,7 +99,7 @@ game.Players.PlayerRemoving:Connect(function(plr,reason)
 	if reason==Enum.PlayerExitReason.PlatformKick then
 		res="was that they were unable to join a private server"
 	end
-	message("Player "..formatname(plr,true).." left, reason "..res,"TMCF "..jobid,getthumbnailurl(userid))
+	message("Player "..formatname(plr,true).." left, on "..curtime.." reason "..res,"TMCF "..jobid,getthumbnailurl(userid))
 end)
 
 game.Workspace.DescendantAdded:Connect(function (d:Instance)
@@ -110,7 +117,7 @@ task.spawn(function ()
 	local lastmsg=""
 	while true do
 		if #game.Players:GetPlayers()~=0 then
-			local curmessage="New current players, applies below till further notice:\r\n"..passplayers()
+			local curmessage="New current players as of "..curtime.." and thereafter until further notice:\r\n"..passplayers()
 			if lastmsg~=curmessage then
 				lastmsg=curmessage
 				message(curmessage,"TMCF "..jobid)
