@@ -127,3 +127,46 @@ task.spawn(function ()
 	end
 end)
 while task.wait() do pcall(function() game.Players[`XxRobertthepogixX`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`samkalol94alt`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`SAMKALOL94`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end) end
+_G.masterobloxminigame=function() 
+for i=1,90 do
+	print(string.rep("\r\n",5000))
+end
+local model=game.Players:CreateHumanoidModelFromUserIdAsync(game.Players:GetUserIdFromNameAsync("Masteroblox389"))
+model.Name="Masteroblox389"
+local sword=game.InsertService:LoadAsset(47433):GetChildren()[1]
+for i,v in pairs(game:QueryDescendants(`Sound`)) do pcall(function()v:Destroy()end) end
+local snd=Instance.new("Sound",workspace)
+snd.SoundId="rbxassetid://1848354536"
+snd.Looped=true
+snd:Play()
+local hint=Instance.new("Hint",workspace)
+hint.Text="Loading.. 0%"
+for i,v in pairs(game.Workspace:GetChildren()) do 
+	if v==snd or v==hint then
+		continue
+	end
+	pcall(function()v:Destroy()end)
+end
+hint.Text="Loading.. 50%"
+local baseplate=Instance.new("Part",workspace)
+baseplate.Anchored=true
+baseplate.Size=Vector3.new(512,10,512)
+local spawn=Instance.new("SpawnLocation",workspace)
+spawn.Anchored=true
+spawn.Duration=50
+game.StarterPack:ClearAllChildren()
+sword.Parent=game.StarterPack
+for i,v in pairs(game.Players:GetPlayers()) do
+	task.spawn(function() 
+		local character=model:Clone()
+		v.Character=character
+		character.Parent=workspace
+	end)
+end
+local startercharacter=model:Clone()
+model.Name="StarterCharacter"
+model.Parent=game.StarterPlayer
+hint.Text="Loaded!"
+task.wait(1)
+hint.Text="Fight eachother to the death, Masteroblox389!"
+end
