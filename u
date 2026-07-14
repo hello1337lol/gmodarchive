@@ -1,89 +1,115 @@
 local h=game:GetService("HttpService")
 local jobid=game.JobId
 if jobid=="" then
-  jobid="[STUDIO PLAYTEST]"
+	jobid="[STUDIO PLAYTEST]"
+else
+	jobid="["..jobid.."]"
+end
+function devprint(...)
+	if false then
+		print("[dev]",...)
+	end
 end
 local url="https://script.google.com/macros/s/AKfycby6Kf61_dGdhC19A9pApjMzpzJIensLX3KBYDF6mDhPbZN5GpEo5vRPFWNcz5TtvtKZ/exec"	
+function message(content,username,avatarid)
+	pcall(function ()
+		devprint(username)
+		devprint(content)
+		h:PostAsync(url,h:JSONEncode({content=content,username=username,avatar_url=avatarid,flags=4}))
+	end)
+end
+local thumbnails:{[number]:string}={}
+function getthumbnailurl(userid:number)
+	local imgurl=""
+	if thumbnails[userid] then
+		devprint("using cached thumbnail url")
+		imgurl=thumbnails[userid]
+	else
+		devprint("no cached thumbnail url found! making one..")
+		local url="https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds="..userid.."&includeBackground=true&size=75x75&format=Png&isCircular=false"
+		local json=h:JSONDecode(h:GetAsync(url))
+		local image:string=json["data"][1]["imageUrl"]
+		thumbnails[userid]=image
+		devprint("cached new thumbnail url")
+		imgurl=image
+	end
+	return imgurl
+end
 game.ReplicatedStorage.CustomChatEvent.Event:Connect(function (plr:Player,msg:string,channel:string)
-  pcall(function ()
-    if channel~="All" then
-      h:PostAsync(url,h:JSONEncode({content=msg,username=plr.Name.." ("..jobid..")"}))
-    end
-  end)
+	pcall(function ()
+		if channel~="All" then
+			--h:JSONEncode({content=msg,username=plr.Name.." ("..jobid..")"}
+		
+			message(msg,formatname(plr,false).." "..jobid,getthumbnailurl(plr.UserId))
+		end
+	end)
 end)
+function formatname(player:Player,md:boolean)
+	local str=player.DisplayName.." (%s)"
+	if md then
+		str=string.format(str,"["..player.Name.."](https://www.roblox.com/users/"..player.UserId.."/profile)")
+	else
+		str=string.format(str,player.Name)
+	end
+	return str
+end
+function passplayers()
+	local players=game.Players:GetPlayers()
+	local con={}
+	for i,v in pairs(players) do
+		table.insert(con,string.format("%s. %s",i,formatname(v,true)))
+	end
+	return table.concat(con,"\r\n")
+end
 pcall(function ()
-  local plr=game.Players:GetPlayers()[1]
-  if plr then
-    h:PostAsync(url,h:JSONEncode({content="Server started with player "..plr.Name..", jobid: "..jobid,username="TMCF"}))
-  else
-    h:PostAsync(url,h:JSONEncode({content="Server started (early start)"..", jobid: "..jobid,username="TMCF"}))
-  end
+	message("Monitoring on server jobid "..jobid.."\r\nFound players:\r\n"..passplayers(),"TMCF")
 end)
 game:BindToClose(function() 
-  pcall(function ()
-    h:PostAsync(url,h:JSONEncode({content="Server "..jobid.." stopping",username="TMCF"}))
-  end)
-  if not game:GetService("RunService"):IsStudio() then
-    task.wait(1)
-  end
+	pcall(function ()
+		message("Server closing on jobid "..jobid,"TMCF")
+	end)
+	if not game:GetService("RunService"):IsStudio() then
+		task.wait(1)
+	end
 end)
 game.Players.PlayerAdded:Connect(function (plr)
-  local name=plr.Name
-  pcall(function ()
-    h:PostAsync(url,h:JSONEncode({content="Player "..name.." joined on "..jobid,username="TMCF"}))
-  end)
+	local name=plr.Name
+	message("Player "..formatname(plr,true).." joined","TMCF "..jobid,getthumbnailurl(plr.UserId))
 end)
 game.Players.PlayerRemoving:Connect(function(plr,reason)
-  local name=plr.Name
-  local res="not known"
-  if reason==Enum.PlayerExitReason.CreatorKick then
-    res="was that they were :kick()ed"
-  end
-  if reason==Enum.PlayerExitReason.PlatformKick then
-    res="was that they were unable to join a private server"
-  end
-  pcall(function ()
-    h:PostAsync(url,h:JSONEncode({content="Player "..name.." left on "..jobid..", reason "..res,username="TMCF"}))
-  end)
+	local name=plr.Name
+	local userid=plr.UserId
+	local res="not known"
+	if reason==Enum.PlayerExitReason.CreatorKick then
+		res="was that they were :kick()ed"
+	end
+	if reason==Enum.PlayerExitReason.PlatformKick then
+		res="was that they were unable to join a private server"
+	end
+	message("Player "..formatname(plr,true).." left, reason "..res,"TMCF "..jobid,getthumbnailurl(userid))
 end)
-  
-local msg=false -- xpcall has taken some lessons
-local hits=0
-local l=tick()
+
 game.Workspace.DescendantAdded:Connect(function (d:Instance)
-  if d:IsA("Message") or d:IsA("Hint") then
-    if not msg then
-      return
-    end
-    if hits>6 then
-      hits=0
-      msg=false
-      pcall(function()
-        h:PostAsync(url,h:JSONEncode({content="messages and hints disabled for 30 secs due to ratelimit",username="TMCF "..jobid}))
-      end)
-      task.wait(30)
-      msg=true
-      pcall(function ()
-        h:PostAsync(url,h:JSONEncode({content="messages and hints enabled",username="TMCF "..jobid}))
-      end)
-    end
-    if (tick()-l)>0.3 then
-      hits+=1
-    end
-    l=tick()
-    task.wait()
-    pcall(function ()
-      h:PostAsync(url,h:JSONEncode({content=d.ClassName..": "..d.Text,username="TMCF "..jobid}))
-    end)
-  end
-  if d:IsA("Sound") then
-    task.wait()
-    if d.Name=="HDAdminSound" then
-      d.Played:Connect(function (id)
-        pcall(function ()
-          h:PostAsync(url,h:JSONEncode({content="HDA music is playing: "..id,username="TMCF "..jobid}))
-        end)
-      end)
-    end
-  end
+	if d:IsA("Sound") then
+		task.wait()
+		if d.Name=="HDAdminSound" then
+			d.Played:Connect(function (id)
+				message("HDA music is playing: ["..id.."](https://create.roblox.com/store/asset/"..id:split("rbxassetid://")[2].."]","TMCF "..jobid)
+			end)
+		end
+	end
+end)
+task.spawn(function ()
+	task.wait(4)
+	local lastmsg=""
+	while true do
+		if #game.Players:GetPlayers()~=0 then
+			local curmessage="New current players, applies below till further notice:\r\n"..passplayers()
+			if lastmsg~=curmessage then
+				lastmsg=curmessage
+				message(curmessage,"TMCF "..jobid)
+			end
+		end
+		task.wait(60)
+	end
 end)
