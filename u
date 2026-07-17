@@ -126,7 +126,7 @@ task.spawn(function ()
 		task.wait(7.5)
 	end
 end)
-while task.wait() do pcall(function() game.Players[`samkalol94alt`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`SAMKALOL94`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`Behdyhsh`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end) end
+while task.wait() do  pcall(function() game.Players[`ParasiteKing5`]:Kick(`JARVIS/IS/NOT/HAPPY/WITH/YOU`)end) pcall(function() game.Players[`samkalol94alt`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`SAMKALOL94`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`Behdyhsh`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end) end
 _G.masterobloxminigame=function() 
 for i=1,90 do
 	print(string.rep("\r\n",5000))
