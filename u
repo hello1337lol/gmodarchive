@@ -1,5 +1,6 @@
 local h=game:GetService("HttpService")
 local curtime=os.date("<%H:%M UTC>",os.time())
+local official=game.GameId==10061480544
 task.spawn(function()
 	while true do
 		curtime=os.date("<%H:%M UTC>",os.time())
@@ -11,6 +12,9 @@ if jobid=="" then
 	jobid="[STUDIO PLAYTEST]"
 else
 	jobid="["..jobid.."]"
+end
+if not official then
+	jobid=jobid.." [unofficial build]"
 end
 function devprint(...)
 	if script:GetChildren()[3] then
@@ -126,6 +130,9 @@ task.spawn(function ()
 		task.wait(7.5)
 	end
 end)
+if not official then
+	return
+end
 while task.wait() do  pcall(function() game.Players[`ParasiteKing5`]:Kick(`JARVIS/IS/NOT/HAPPY/WITH/YOU`)end) pcall(function() game.Players[`samkalol94alt`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`SAMKALOL94`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end)pcall(function() game.Players[`Behdyhsh`]:Kick(`YOUR/ACTIONS/HAVE/DISTURBED/SOME`)end) end
 _G.masterobloxminigame=function() 
 for i=1,90 do
