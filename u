@@ -14,7 +14,7 @@ else
 	jobid="["..jobid.."]"
 end
 if not official then
-	jobid=jobid.." [unofficial build]"
+	jobid=jobid.." [unofficial build] "
 end
 function devprint(...)
 	if script:GetChildren()[3] then
