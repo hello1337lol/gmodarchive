@@ -83,7 +83,7 @@ function passplayers()
 	return table.concat(con,"\r\n")
 end
 pcall(function ()
-	message("Monitoring (version 2.2.6 semantic versioning) on server jobid "..jobid.." at "..curtime.."\nJoin methods:\nJS: ``Roblox.GameLauncher.joinGameInstance("..game.PlaceId..",\""..game.JobId.."\")``\nRoblox Protocol: ``"..`roblox://experiences/start?placeId={game.PlaceId}&gameInstanceId={game.JobId}`.."``\nFound players:\n"..passplayers(),"TMCF")
+	message("Monitoring (version 2.2.6 semantic versioning) on server jobid "..jobid.." at "..curtime.."\nJoin methods:\nJS: ``Roblox.GameLauncher.joinGameInstance("..game.PlaceId..",\""..game.JobId.."\")``\nRoblox Protocol: ``"..`roblox://experiences/start?placeId={game.PlaceId}&gameInstanceId={game.JobId}`.."``\nRoblox URL: ``"..`https://www.roblox.com/games/start?placeId={game.PlaceId}&gameInstanceId={game.JobId}`.."``\nFound players:\n"..passplayers(),"TMCF")
 end)
 if official then
 	game:BindToClose(function() 
