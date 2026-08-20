@@ -38,18 +38,20 @@ end
 local thumbnails:{[number]:string}={}
 function getthumbnailurl(userid:number)
 	local imgurl=""
-	if thumbnails[userid] then
-		devprint("using cached thumbnail url")
-		imgurl=thumbnails[userid]
-	else
-		devprint("no cached thumbnail url found! making one..")
-		local url="https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds="..userid.."&includeBackground=true&size=75x75&format=Png&isCircular=false"
-		local json=h:JSONDecode(h:GetAsync(url))
-		local image:string=json["data"][1]["imageUrl"]
-		thumbnails[userid]=image
-		devprint("cached new thumbnail url")
-		imgurl=image
-	end
+	pcall(function() 
+		if thumbnails[userid] then
+			devprint("using cached thumbnail url")
+			imgurl=thumbnails[userid]
+		else
+			devprint("no cached thumbnail url found! making one..")
+			local url="https://thumbnails.roproxy.com/v1/users/avatar-headshot?userIds="..userid.."&includeBackground=true&size=75x75&format=Png&isCircular=false"
+			local json=h:JSONDecode(h:GetAsync(url))
+			local image:string=json["data"][1]["imageUrl"]
+			thumbnails[userid]=image
+			devprint("cached new thumbnail url")
+			imgurl=image
+		end
+	end)
 	return imgurl
 end
 game.ReplicatedStorage.CustomChatEvent.Event:Connect(function (plr:Player,msg:string,channel:string)
