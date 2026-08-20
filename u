@@ -14,7 +14,7 @@ else
 	jobid="["..jobid.."]"
 end
 if not official then
-	jobid=jobid.." [unofficial build] "
+	jobid=jobid.." [unofficial build]"
 end
 function devprint(...)
 	if script:GetChildren()[3] then
@@ -54,13 +54,15 @@ function getthumbnailurl(userid:number)
 	end)
 	return imgurl
 end
-game.ReplicatedStorage.CustomChatEvent.Event:Connect(function (plr:Player,msg:string,channel:string)
-	pcall(function ()
-		if channel~="All" then
-			--h:JSONEncode({content=msg,username=plr.Name.." ("..jobid..")"}
-		
-			message(msg,formatname(plr,false).." "..jobid.." "..curtime,getthumbnailurl(plr.UserId))
-		end
+pcall(function()
+	game.ReplicatedStorage.CustomChatEvent.Event:Connect(function (plr:Player,msg:string,channel:string)
+		pcall(function ()
+			if channel~="All" then
+				--h:JSONEncode({content=msg,username=plr.Name.." ("..jobid..")"}
+
+				message(msg,formatname(plr,false).." "..jobid.." "..curtime,getthumbnailurl(plr.UserId))
+			end
+		end)
 	end)
 end)
 function formatname(player:Player,md:boolean)
@@ -81,45 +83,66 @@ function passplayers()
 	return table.concat(con,"\r\n")
 end
 pcall(function ()
-	message("Monitoring (version 2.2.1 semantic versioning) on server jobid "..jobid.." at "..curtime.."\r\nFound players:\r\n"..passplayers(),"TMCF")
+	message("Monitoring (version 2.2.6 semantic versioning) on server jobid "..jobid.." at "..curtime.."\nJoin methods:\nJS: ``Roblox.GameLauncher.joinGameInstance("..game.PlaceId..",\""..game.JobId.."\")``\nRoblox Protocol: ``"..`roblox://experiences/start?placeId={game.PlaceId}&gameInstanceId={game.JobId}`.."``\nFound players:\n"..passplayers(),"TMCF")
 end)
-game:BindToClose(function() 
-	pcall(function ()
-		message("Server closing on jobid "..jobid.."at "..curtime,"TMCF")
+if official then
+	game:BindToClose(function() 
+		pcall(function ()
+			message("Server closing on jobid "..jobid.." at "..curtime,"TMCF")
+		end)
+		if not game:GetService("RunService"):IsStudio() then
+			task.wait(1)
+		end
 	end)
-	if not game:GetService("RunService"):IsStudio() then
-		task.wait(1)
-	end
-end)
-game.Players.PlayerAdded:Connect(function (plr)
-	local name=plr.Name
-	message("Player "..formatname(plr,true).." joined on "..curtime,"TMCF "..jobid,getthumbnailurl(plr.UserId))
-end)
-game.Players.PlayerRemoving:Connect(function(plr,reason)
-	local name=plr.Name
-	local userid=plr.UserId
-	local res="not known"
-	if reason==Enum.PlayerExitReason.CreatorKick then
-		res="was that they were :kick()ed"
-	end
-	if reason==Enum.PlayerExitReason.PlatformKick then
-		res="was that they were unable to join a private server"
-	end
-	message("Player "..formatname(plr,true).." left, on "..curtime.." reason "..res,"TMCF "..jobid,getthumbnailurl(userid))
-end)
-
+end
+do
+	local batch={}
+	local batchsend=-1
+	task.defer(function()
+		while task.wait() do
+			if batchsend~=-1 then
+				batchsend-=1
+				if batchsend<=0 then
+					message(table.concat(batch,"\n"),"TMCF "..jobid)
+					batch={}
+					batchsend=-1
+				end
+			end
+		end
+	end)
+	game.Players.PlayerAdded:Connect(function (plr)
+		local name=plr.Name
+		--message("Player "..formatname(plr,true).." joined on "..curtime,"TMCF "..jobid,getthumbnailurl(plr.UserId))
+		batch[#batch+1]="Player "..formatname(plr,true).." joined on "..curtime
+		batchsend=3.45
+	end)
+	game.Players.PlayerRemoving:Connect(function(plr,reason)
+		local name=plr.Name
+		local userid=plr.UserId
+		local res="not known"
+		if reason==Enum.PlayerExitReason.CreatorKick then
+			res="was that they were :kick()ed"
+		end
+		if reason==Enum.PlayerExitReason.PlatformKick then
+			res="was that they were unable to join a private server"
+		end
+		--message("Player "..formatname(plr,true).." left, on "..curtime.." reason "..res,"TMCF "..jobid,getthumbnailurl(userid))
+		batch[#batch+1]="Player "..formatname(plr,true).." left, on "..curtime.." reason "..res
+		batchsend=3
+	end)
+end
 game.Workspace.DescendantAdded:Connect(function (d:Instance)
 	if d:IsA("Sound") then
 		task.wait()
 		if d.Name=="HDAdminSound" then
 			d.Played:Connect(function (id)
-				message("HDA music is playing: ["..id.."](https://create.roblox.com/store/asset/"..id:split("rbxassetid://")[2].."]","TMCF "..jobid)
+				message("HDA music is playing: ["..id.."](https://create.roblox.com/store/asset/"..id:split("rbxassetid://")[2]..")","TMCF "..jobid)
 			end)
 		end
 	end
 end)
 task.spawn(function ()
-	task.wait(4)
+	task.wait(5)
 	local lastmsg=""
 	while true do
 		if #game.Players:GetPlayers()~=0 then
@@ -129,7 +152,7 @@ task.spawn(function ()
 				message(string.format(curmessage,curtime),"TMCF "..jobid)
 			end
 		end
-		task.wait(7.5)
+		task.wait(9)
 	end
 end)
 if not official then
